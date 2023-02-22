@@ -3,9 +3,15 @@ from watchdog.observers import Observer
 import sys
 import os
 import time
+import logging
 from Backuper import Backuper
 
 if __name__ == "__main__":
+
+    logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(message)s',
+                    datefmt='[\033[32m INFO \033[0m]\033[34m %H:%M:%S \033[0m')
+                    
     path = sys.argv[1] if len(sys.argv) > 1 else os.getenv(
         'HOME') + os.sep + 'Downloads'
     

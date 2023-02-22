@@ -1,37 +1,36 @@
-from watchdog.events import FileSystemEventHandler
+#from watchdog.events import FileSystemEventHandler
+from watchdog.events import LoggingEventHandler
 from pathlib import Path
 import time
 import zipfile
 import os
 
-class Backuper(FileSystemEventHandler):
+class Backuper(LoggingEventHandler):
   
     def __init__(self, watch_dir,video_dir, zip_dir):
-      super(Backuper, self).__init__()      
+      #super().__init__()     
+      super().__init__() 
       self._watch_dir = watch_dir
       self._video_dir = video_dir
       self._zip_dir = zip_dir
       print("watching dir: %s"%self._watch_dir)
+      
 
     def on_moved(self, event):
-        pass
+        super().on_moved(event)
+        self.backup(event.dest_path)
+        
 
 
-    def on_deleted(self, event):
-        pass
+    # def on_deleted(self, event):
+    #     pass
 
     def on_modified(self, event):
-        super(Backuper, self).on_modified(event)
-        now_time = time.strftime("[\033[32m INFO \033[0m]\033[34m %H:%M:%S \033[0m", time.localtime())
-        what = 'directory' if event.is_directory else 'file'
-        print("{0} {1} Modified : {2} ".format(now_time, what, event.src_path))
+        super().on_modified(event)        
         self.backup(event.src_path)
         
     def on_created(self, event):
-        #super(Backuper, self).on_create(event)
-        now_time = time.strftime("[\033[32m INFO \033[0m]\033[34m %H:%M:%S \033[0m", time.localtime())
-        what = 'directory' if event.is_directory else 'file'
-        print ("{0} {1} Created : {2} ".format(now_time, what, event.src_path))
+        super().on_create(event)        
         self.backup(event.src_path)
 
     def backup(self,file_path):
