@@ -39,20 +39,20 @@ class Backuper(LoggingEventHandler):
           self.logger.warn(f"ignore hidden item: {file_path}")
           return False
         
+        ext_name = src_path_obj.suffix
+
         if ext_name == '.':
           self.logger.warn(f"ignore hidden item: {file_path}")
           return False
         
-        ext_name = src_path_obj.suffix
+        
         disallowed_exts = ('.crdownload','.bak','.tmp')
-
         if ext_name in disallowed_exts:
             self.logger.warn(f"ignore disallowed extendsion name: {ext_name}")
             return False
     
         video_exts = ('.wmv', '.avi', '.mp4', '.mkv', '.rm',
                       '.rmvb', '.3gp', '.rm', '.mpeg', '.mpg', '.mov')
-
         if ext_name in video_exts:
             backup_dir = self.create_time_dir(self._video_dir)
         else:
@@ -69,8 +69,12 @@ class Backuper(LoggingEventHandler):
         if not src_path_obj.exists():
             return backup_path
 
-        if os.path.getsize(file_path) == 0:
-            return backup_path
+        try:
+            if os.path.getsize(file_path) == 0:
+                return backup_path
+        except FileNotFoundError as e:
+            self.logger.warn("Src File not Found: {src}".format(src=file_path))
+            return False
 
         self.logger.info("start copy: from {src} to {target}".format(
             src=file_path, target=backup_path))
