@@ -33,17 +33,23 @@ class Backuper(LoggingEventHandler):
         self.backup(event.src_path)
 
     def backup(self, file_path):
-
-        # file_path = '/Users/falcon/Downloads/新冠肺炎阳康一个月后，肺部恢复情况和我的后遗症【罗宾VLOG】-RIlNnh_m1t8.zip';
-        # self._video_dir = '/Volumes/Seagate/Share/115'
-
         
         src_path_obj = Path(file_path)
         if src_path_obj.stem[0] == '.':
           self.logger.warn(f"ignore hidden item: {file_path}")
           return False
         
+        if ext_name == '.':
+          self.logger.warn(f"ignore hidden item: {file_path}")
+          return False
+        
         ext_name = src_path_obj.suffix
+        disallowed_exts = ('.crdownload','.bak','.tmp')
+
+        if ext_name in disallowed_exts:
+            self.logger.warn(f"ignore disallowed extendsion name: {ext_name}")
+            return False
+    
         video_exts = ('.wmv', '.avi', '.mp4', '.mkv', '.rm',
                       '.rmvb', '.3gp', '.rm', '.mpeg', '.mpg', '.mov')
 
