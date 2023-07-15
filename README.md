@@ -11,5 +11,6 @@
 4. 备份完成后，删除下载目录下的源文件
 
 ``` bash
+pip install -r requirements.txt
 ./Airback.py
 ```
