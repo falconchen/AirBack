@@ -46,20 +46,28 @@ class Backuper(LoggingEventHandler):
           return False
         
         
-        disallowed_exts = ('.crdownload','.bak','.tmp')
+        disallowed_exts = ('.crdownload','.bak','.tmp','.part')
         if ext_name in disallowed_exts:
             self.logger.warn(f"ignore disallowed extendsion name: {ext_name}")
             return False
     
         video_exts = ('.wmv', '.avi', '.mp4', '.mkv', '.rm',
                       '.rmvb', '.3gp', '.rm', '.mpeg', '.mpg', '.mov')
-        if ext_name in video_exts:
+
+        if src_path_obj.parent.name == 'Youtube':
+            backup_dir = self.create_time_dir()
+            backup_path = Path(backup_dir).joinpath(src_path_obj.name)
+        elif ext_name in video_exts:
             backup_dir = self.create_time_dir(self._video_dir)
+            backup_path = file_path.replace(self._watch_dir, backup_dir)        
         else:
             backup_dir = self.create_time_dir()
+            backup_path = file_path.replace(self._watch_dir, backup_dir)        
 
-        backup_path = file_path.replace(self._watch_dir, backup_dir)
-
+        
+        backup_folder = Path(backup_path).parent
+        if not Path(backup_folder).is_dir():
+            os.makedirs(name=backup_folder,exist_ok=True)
         
 
         if src_path_obj.is_dir():
